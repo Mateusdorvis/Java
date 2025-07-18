@@ -1,5 +1,23 @@
 import java.util.Scanner;
 public class Quiz{
+    public static String Parabens(){
+        String logo = 
+                "          ____                                                                                        \n" +
+                "        ,'  , `.                         ___                                                   ____   \n" +
+                "     ,-+-,.' _ |                ,--,   ,--.'|_                     ,---,                     ,'  , `. \n" +
+                "  ,-+-. ;   , ||         ,--, ,--.'|   |  | :,'   ,---.          ,---.'|      ,---.       ,-+-,.' _ | \n" +
+                " ,--.'|'   |  ;|       ,'_ /| |  |,    :  : ' :  '   ,'\\         |   | :     '   ,'\\   ,-+-. ;   , || \n" +
+                "|   |  ,', |  ':  .--. |  | : `--'_  .;__,'  /  /   /   |        :   : :    /   /   | ,--.'|'   |  || \n" +
+                "|   | /  | |  ||,'_ /| :  . | ,' ,'| |  |   |  .   ; ,. :        :     |,-..   ; ,. :|   |  ,', |  |, \n" +
+                "'   | :  | :  |,|  ' | |  . . '  | | :__,'| :  '   | |: :        |   : '  |'   | |: :|   | /  | |--'  \n" +
+                ";   . |  ; |--' |  | ' |  | | |  | :   '  : |__'   | .; :        |   |  / :'   | .; :|   : |  | ,     \n" +
+                "|   : |  | ,    :  | : ;  ; | '  : |__ |  | '.'|   :    |        '   : |: ||   :    ||   : |  |/      \n" +
+                "|   : '  |/     '  :  `--'   \\|  | '.'|;  :    ;\\   \\  /         |   | '/ : \\   \\  / |   | |`-'       \n" +
+                ";   | |`-'      :  ,      .-./;  :    ;|  ,   /  `----'          |   :    |  `----'  |   ;/           \n" +
+                "|   ;/           `--`----'    |  ,   /  ---`-'                   /    \\  /           '---'            \n" +
+                "'---'                          ---`-'                            `-'----'                             \n";
+        return logo;
+    }
     public static void Print(String format, Object... arguments){
         System.out.printf(format, arguments);
     }
@@ -23,8 +41,9 @@ public class Quiz{
 
     }
     public static void main(String[] args){
-        String yellow,reset;
+        String yellow,reset, green;
         yellow = "\033[1;93m";
+        green = "\033[1;92m";
         reset = "\033[00m";
         //perguntas 
         String q1,q2,q3,q4,q5;
@@ -57,6 +76,7 @@ public class Quiz{
            }
            //se o número de acertos for igual a 5, o loop é paradao
            if (accerts == 5){
+            Print("%s %s %s", green, Parabens(), reset);
             break;
            }
            index++;
