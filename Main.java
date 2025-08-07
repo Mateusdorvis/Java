@@ -1,70 +1,82 @@
-import java.util.Scanner;                                              import java.nio.file.*;
-import java.io.IOException;
-class Country{
-    private String name;                                                   private String capital;
-    private String continent;
-    private int habitant;
+import java.net.*;
+import java.io.*;
+import java.nio.file.*;
+import java.time.*; //importando time para mostrar a hora real do sistema
 
-    //constructor
-        public Country(String name, String capital, String continent, int habitant){
-        this.name = name;
-        this.capital = capital;
-        this.continent = continent;
-        this.habitant = habitant;
-        }
-        //methods of class
-        public void InfoCountry(){
-            String  reset,green, red, yellow, blue, colorstatus,msg;
-            red = "\033[1;91m";
-            green = "\033[1;92m";
-            yellow = "\033[1;93m";
-            blue = "\033[1;94m";
-            reset = "\033[00m";
-                System.out.printf("""
-INFORMATION COUNTRY %s %s %s ...
-Name : %s %s %s
-Capital : %s %s %s
-Habitant : %s %,d %s
-Continent : %s %s %s
-                """, yellow, this.name, reset, green, this.name, reset, green, this.capital, reset, green, this.habitant, reset, green, this.continent, reset);
+class Server{
+    private int port;
+    //construtor
+    public Server(int port){
+        this.port = port;
+    }
+    //métodos da classe
+    public LocalDateTime dateNow(){
+        LocalDateTime date = LocalDateTime.now();
+        return date;
+    }
+    public void run(){
+       try{ 
+            String content = Files.readString(Path.of("site.html")); //pega o conteudo
+            String logo = Files.readString(Path.of("art.txt"));
+            Print("\033[1;92m %s \033[00m\n", logo);
+            Print("==================================================================================================================================================\n");
+            ServerSocket socketserver = new ServerSocket(this.port);
+            var address_server = socketserver.getInetAddress();
+            Print(dateNow()+"  \033[1;37m  [+] Servidor "+address_server+" rodando  na porta "+port+"...\033[00m\n");
+            Socket client_server = socketserver.accept();
+            var client_addr = client_server.getInetAddress();
+            Print(dateNow()+"   \033[1;37m [+] Escutando cliente : "+ client_addr+" \033[00m\n");
+            String data = recv(client_server);
+            Print(dateNow()+"    [*] Recebido : \033[1;33m \n%s\n\033[00m",data);
+            String msg = "HTTP/1.1 200 OK\r\nContent-Type:text/html\r\nContent-Length: "+content.getBytes().length+"\r\nConnection:close\r\n\r\n"+content;
+            sendto(client_server, msg);
+            client_server.close();
+            socketserver.close();
+       }catch(IOException e){
+           Print(dateNow()+"   Error : "+e.getMessage()+"\n");
+       }
 
 
 
-        }
+    }
+    public String recv(Socket client) {
+    try {
+        InputStream input = client.getInputStream();
+        byte[] buffer = new byte[4096];
+        int recv_data = input.read(buffer);
+        return new String(buffer, 0, recv_data);
+    } catch (IOException e) {
+        Print(dateNow()+"  Erro ao receber dados: %s\n", e.getMessage());
+        return "";
+    }
+}
+
+public void sendto(Socket client, String data) {
+    try {
+        OutputStream output = client.getOutputStream();
+        var data_byte = data.getBytes();
+        output.write(data_byte);
+        output.flush();
+    } catch (IOException e) {
+        Print(dateNow()+"  Erro ao enviar dados: %s\n", e.getMessage());
+    }
+}
+
+    public void Print(String format, Object...arguments){
+        System.out.printf(format, arguments);
+    }
+    
+
 }
 public class Main{
-        public static void main(String[] args ){
-            String red,  name, capital, habitant, continent, blue, reset, art;
-        //colors ANSI
-            blue = "\033[1;94m";
-            reset = "\033[00m";
-            red = "\033[1;91m";
-        //loading art ASCII
-        try{
-        art = Files.readString(Path.of("art.txt"));
-        System.out.printf("%s\n", art);}catch(Exception e){
-                System.out.printf("%s Error : %s %\n", red, e.getMessage(), reset);
-                System.exit(1);
-        }
 
-                Scanner stdin = new Scanner(System.in);
-                System.out.printf("Country name : ");
-                name = stdin.nextLine().strip();
-                System.out.printf("Country capital %s%s%s : ",blue, name, reset);
-                capital = stdin.nextLine().strip();
-        System.out.printf("Country habitant  %s%s%s : ",blue, name, reset);
-        habitant = stdin.nextLine().strip();
-        System.out.printf("Country continent %s%s%s : ",blue, name, reset);
-        continent = stdin.nextLine().strip();
-        int habitantInt = 0;
-        try{
-                habitantInt = Integer.parseInt(habitant);
-
-        }catch(NumberFormatException err){
-                System.out.printf("%s %s %s \n",red, err.getMessage(), reset);
-                System.exit(1);
+       public static void  main(String[] args){
+        if(args.length < 1){
+             System.out.println("Usage : java Main PORT\nExample : java Main 8001\n");
+             System.exit(1);
         }
-        Country country = new Country(name,capital, continent, habitantInt);
-        country.InfoCountry();
-        }
+        int port = Integer.parseInt(args[0]); //pega o primeiro argumento
+        Server servidor = new Server(port);
+        servidor.run(); //roda o servidor !
+       }
 }
