@@ -17,7 +17,7 @@ class Server{
     public void run(){
        try{ 
             String content = Files.readString(Path.of("site.html")); //pega o conteudo
-            String logo = Files.readString(Path.of("art.txt"));
+            String logo = Files.readString(Path.of("art2.txt"));
             Print("\033[1;92m %s \033[00m\n", logo);
             Print("==================================================================================================================================================\n");
             ServerSocket socketserver = new ServerSocket(this.port);
